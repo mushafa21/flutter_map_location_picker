@@ -94,13 +94,8 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                 locationList.addAll(await locationFromAddress(value));
 
                 if(locationList.isNotEmpty){
-                  locationList.forEach((element) {
-                    print(element.latitude.toString() + " , " + element.longitude.toString() );
-
-                  });
                 } else{
                   error = true;
-                  print("gaada lokasi");
                 }
 
 
@@ -112,7 +107,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
               });
 
             },
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               prefixIcon: Icon(Icons.search),
               fillColor: Colors.white,
               filled: true,
@@ -137,9 +132,9 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
           ,
           error ? Container(
             width: double.infinity,
-            padding:EdgeInsets.all(10),
+            padding:const EdgeInsets.all(10),
             color: Colors.white,
-            child: Text("Location not found"),
+            child: const Text("Location not found"),
           ) : Container()
         ],
       );
@@ -152,21 +147,21 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
           borderRadius: BorderRadius.circular(10),
           color: Colors.white,
         ),
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         child: Column(children: [
           Row(
             children: [
-              Icon(Icons.location_city,),
-              SizedBox(width: 10,),
+              const Icon(Icons.location_city,),
+              const SizedBox(width: 10,),
               Expanded(child: Text(locationName))
             ],
           ),
-          SizedBox(height: 20,),
+          const SizedBox(height: 20,),
           ElevatedButton(onPressed: (){
             widget.onNext(
                 LocationResult(latitude, longitude, locationName)
             );
-          }, child: Text("Select Location"),)
+          }, child: const Text("Select Location"),)
         ],),
       );
     }
@@ -181,7 +176,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
         controller.move(LatLng(latitude, longitude), 16);
         _timer?.cancel();
         getLocationName();
-      }, icon: Icon(Icons.my_location),color: Colors.white,style: IconButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary),padding: EdgeInsets.all(10),);
+      }, icon: const Icon(Icons.my_location),color: Colors.white,style: IconButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary),padding: const EdgeInsets.all(10),);
     }
 
 
@@ -198,11 +193,10 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
           controller.mapEventStream.listen((evt) async {
             _timer?.cancel();
             if(!move){
-              _timer = Timer(Duration(milliseconds: 200), () {
+              _timer = Timer(const Duration(milliseconds: 200), () {
                 latitude = evt.center.latitude;
                 longitude = evt.center.longitude;
                 getLocationName();
-                print(evt.center);
 
               });
             } else{
@@ -231,12 +225,12 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
             child: Column(
               children: [
                 Align(
+                  alignment: Alignment.centerRight,
                   child: Padding(
-                    padding:  EdgeInsets.only(right: 10),
+                    padding:  const EdgeInsets.only(right: 10),
                     child: myLocationButton(),
-                  ),
-                  alignment: Alignment.centerRight,),
-                SizedBox(height: 10,),
+                  ),),
+                const SizedBox(height: 10,),
                 viewLocationName(),
               ],
             )),
@@ -291,11 +285,11 @@ class _LocationItemState extends State<LocationItem> {
   Widget build(BuildContext context) {
     return  Container(
       color: Colors.white,
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       child: Row(
         children: [
-          Icon(Icons.location_on_rounded),
-          SizedBox(width: 10,),
+          const Icon(Icons.location_on_rounded),
+          const SizedBox(width: 10,),
           Expanded(child: Text(locationName ?? "Searching location..."))
 
         ],

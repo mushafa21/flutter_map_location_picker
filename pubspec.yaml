@@ -1,7 +1,6 @@
 name: flutter_map_location_picker
 description: A Map location picker using flutter_map with search and pick location for free and without any API key!.
 version: 0.0.1
-author: Mushafa Fadzan Andira
 homepage: https://github.com/mushafa21/flutter_map_location_picker
 
 environment:
