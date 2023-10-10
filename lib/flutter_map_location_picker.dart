@@ -7,10 +7,17 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:latlong2/latlong.dart';
 
+
+
+enum MapType{
+  normal,satelite
+}
+
 class LocationResult{
   double latitude;
   double longitude;
   String address;
+
 
   LocationResult(this.latitude, this.longitude, this.address);
 
@@ -20,16 +27,35 @@ class LocationResult{
 class MapLocationPicker extends StatefulWidget {
   final LatLng? initialLocation;
   final Function(LocationResult) onNext;
-  const MapLocationPicker({super.key, this.initialLocation, required this.onNext});
+  final Color? backgroundColor;
+  final Color? myLocationButtonColor;
+  final Color? zoomButtonColor;
+  
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
+  final Color? indicatorColor;
+  final Color? sideButtonsColor;
+  final Color? sideButtonsIconColor;
 
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
+  final TextStyle? addressTextStyle;
+  final TextStyle? searchTextStyle;
+  final TextStyle? buttonTextStyle;
+  final Widget? centerWidget;
+  final double? initialZoom;
+  final Color? buttonColor;
+  final String? buttonText;
+  final Widget? leadingIcon;
+  final InputDecoration? searchBarDecoration;
+  final bool myLocationButtonEnabled;
+  final bool zoomButtonEnabled;
+  final bool searchBarEnabled;
+  final bool switchMapTypeEnabled;
+  final MapType? mapType;
+  final Widget Function(LocationResult)? customButton;
+  final Widget Function(LocationResult, MapController)? customFooter;
+  final Widget Function(LocationResult,MapController)? sideWidget;
+
+
+  const MapLocationPicker({super.key, this.initialLocation, required this.onNext, this.backgroundColor, this.myLocationButtonColor, this.indicatorColor, this.addressTextStyle, this.searchTextStyle, this.centerWidget, this.buttonColor, this.buttonText, this.leadingIcon, this.searchBarDecoration, this.myLocationButtonEnabled = true, this.searchBarEnabled = true, this.sideWidget, this.customButton, this.customFooter, this.buttonTextStyle, this.zoomButtonEnabled = true, this.initialZoom, this.zoomButtonColor, this.switchMapTypeEnabled = true, this.mapType, this.sideButtonsColor, this.sideButtonsIconColor});
 
 
   @override
@@ -43,6 +69,8 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
   final MapController controller = MapController();
   final List<Location> locationList = [];
   String locationName = "";
+  MapType mapType = MapType.normal;
+
   double latitude = -6.970136294118362;
   double longitude =  110.40326425161746;
 
@@ -52,6 +80,9 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
     if(widget.initialLocation != null){
       latitude = widget.initialLocation!.latitude;
       longitude = widget.initialLocation!.longitude;
+    }
+    if(widget.mapType != null){
+      mapType = widget.mapType!;
     }
     getLocationName();
   }
@@ -79,9 +110,10 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
   Widget build(BuildContext context) {
 
     Widget searchBar(){
-      return Column(
+      return widget.searchBarEnabled ? Column(
         children: [
           TextField(
+            style: widget.searchTextStyle,
             textInputAction: TextInputAction.search,
             onSubmitted: (value) async{
 
@@ -107,9 +139,9 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
               });
 
             },
-            decoration: const InputDecoration(
-              prefixIcon: Icon(Icons.search),
-              fillColor: Colors.white,
+            decoration: widget.searchBarDecoration ??   InputDecoration(
+              prefixIcon: const Icon(Icons.search),
+              fillColor: widget.backgroundColor ??  Colors.white,
               filled: true,
 
             ),
@@ -125,58 +157,111 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                   locationList.clear();
                   setState(() {
                   });
-
                 },
-                child: LocationItem(data: locationList[index]));
+                child: LocationItem(data: locationList[index],backgroundColor: widget.backgroundColor,));
           },itemCount: locationList.length,shrinkWrap: true,) : Container()
           ,
           error ? Container(
             width: double.infinity,
             padding:const EdgeInsets.all(10),
-            color: Colors.white,
+            color: widget.backgroundColor ??  Colors.white,
             child: const Text("Location not found"),
           ) : Container()
         ],
-      );
+      ) : Container();
     }
 
 
     Widget viewLocationName(){
-      return Container(
+      return widget.customFooter != null ? widget.customFooter!(LocationResult(latitude, longitude, locationName),controller) :  Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: Colors.white,
+          color: widget.backgroundColor ?? Colors.white,
         ),
         padding: const EdgeInsets.all(10),
         child: Column(children: [
           Row(
             children: [
-              const Icon(Icons.location_city,),
+              widget.leadingIcon ?? const Icon(Icons.location_city,),
               const SizedBox(width: 10,),
-              Expanded(child: Text(locationName))
+              Expanded(child: Text(locationName,style: widget.addressTextStyle,))
             ],
           ),
           const SizedBox(height: 20,),
-          ElevatedButton(onPressed: (){
+          widget.customButton != null ? widget.customButton!(LocationResult(latitude, longitude, locationName)) : ElevatedButton(onPressed: (){
             widget.onNext(
                 LocationResult(latitude, longitude, locationName)
             );
-          }, child: const Text("Select Location"),)
+          },style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all( widget.buttonColor)
+          ), child:  Text(widget.buttonText != null ? widget.buttonText! : "Select Location"),)
         ],),
       );
     }
 
-    Widget myLocationButton(){
-      return IconButton(onPressed: (){
-        move = true;
-        latitude = widget.initialLocation?.latitude ?? -6.970136294118362;
-        longitude = widget.initialLocation?.longitude ??  110.40326425161746;
-        setState(() {
-        });
-        controller.move(LatLng(latitude, longitude), 16);
-        _timer?.cancel();
-        getLocationName();
-      }, icon: const Icon(Icons.my_location),color: Colors.white,style: IconButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary),padding: const EdgeInsets.all(10),);
+    Widget sideButton(){
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Visibility(
+            visible: widget.switchMapTypeEnabled,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: IconButton(onPressed: (){
+                if(mapType == MapType.normal){
+                  mapType = MapType.satelite;
+                } else{
+                  mapType = MapType.normal;
+                }
+                setState(() {
+
+                });
+
+              }, icon: const Icon(Icons.layers),color: widget.sideButtonsIconColor ??  Colors.white,style: IconButton.styleFrom(backgroundColor: widget.sideButtonsColor ?? Theme.of(context).colorScheme.primary),padding: const EdgeInsets.all(10),),
+            ),
+          ),
+          Visibility(
+            visible: widget.zoomButtonEnabled,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: IconButton(onPressed: (){
+                if(controller.zoom < 17){
+                  controller.move(LatLng(latitude, longitude), controller.zoom + 1);
+                }
+              }, icon: const Icon(Icons.zoom_in_map),color: widget.sideButtonsIconColor ??  Colors.white,style: IconButton.styleFrom(backgroundColor: widget.sideButtonsColor ?? Theme.of(context).colorScheme.primary),padding: const EdgeInsets.all(10),),
+            ),
+          ),
+          Visibility(
+            visible: widget.zoomButtonEnabled,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: IconButton(onPressed: (){
+                if(controller.zoom > 0){
+                  controller.move(LatLng(latitude, longitude), controller.zoom - 1);
+                }
+              }, icon: const Icon(Icons.zoom_out_map),color: widget.sideButtonsIconColor ??  Colors.white,style: IconButton.styleFrom(backgroundColor: widget.sideButtonsColor ?? Theme.of(context).colorScheme.primary),padding: const EdgeInsets.all(10),),
+            ),
+          ),
+          Visibility(
+            visible: widget.myLocationButtonEnabled,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: IconButton(onPressed: (){
+                move = true;
+                latitude = widget.initialLocation?.latitude ?? -6.970136294118362;
+                longitude = widget.initialLocation?.longitude ??  110.40326425161746;
+                setState(() {
+                });
+                controller.move(LatLng(latitude, longitude), 16);
+                _timer?.cancel();
+                getLocationName();
+              }, icon: const Icon(Icons.my_location),color: widget.sideButtonsIconColor ??  Colors.white,style: IconButton.styleFrom(backgroundColor: widget.sideButtonsColor ?? Theme.of(context).colorScheme.primary),padding: const EdgeInsets.all(10),),
+            ),
+          ),
+          widget.sideWidget != null ? widget.sideWidget!(LocationResult(latitude, longitude, locationName),controller) : Container(),
+
+        ],
+      );
     }
 
 
@@ -189,6 +274,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
       options: MapOptions(
         center: LatLng(latitude, longitude),
         zoom: 16,
+        maxZoom: 18,
         onMapReady: () {
           controller.mapEventStream.listen((evt) async {
             _timer?.cancel();
@@ -204,11 +290,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
             }
 
             setState(() {
-
             });
-
-
-
           });
         },
       ),
@@ -228,17 +310,17 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                   alignment: Alignment.centerRight,
                   child: Padding(
                     padding:  const EdgeInsets.only(right: 10),
-                    child: myLocationButton(),
+                    child: sideButton(),
                   ),),
                 const SizedBox(height: 10,),
                 viewLocationName(),
               ],
             )),
-        Center(child: Icon(Icons.location_on_rounded,size: 60,color: Theme.of(context).colorScheme.primary,))
+        Center(child: widget.centerWidget != null ? widget.centerWidget! : Icon(Icons.location_on_rounded,size: 60,color: widget.indicatorColor != null ? widget.indicatorColor! : Theme.of(context).colorScheme.primary,))
       ],
       children: [
         TileLayer(
-          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+          urlTemplate: mapType == MapType.normal ? "http://tile.openstreetmap.org/{z}/{x}/{y}.png" : 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}.jpg',
           userAgentPackageName: 'com.example.app',
         ),
       ],
@@ -248,8 +330,10 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
 
 
 class LocationItem extends StatefulWidget {
+  final Color? backgroundColor;
+  final TextStyle? textStyle;
   final Location data;
-  const LocationItem({super.key, required this.data});
+  const LocationItem({super.key, required this.data, this.backgroundColor, this.textStyle});
 
   @override
   State<LocationItem> createState() => _LocationItemState();
@@ -284,13 +368,13 @@ class _LocationItemState extends State<LocationItem> {
   @override
   Widget build(BuildContext context) {
     return  Container(
-      color: Colors.white,
+      color: widget.backgroundColor ?? Colors.white,
       padding: const EdgeInsets.all(10),
       child: Row(
         children: [
           const Icon(Icons.location_on_rounded),
           const SizedBox(width: 10,),
-          Expanded(child: Text(locationName ?? "Searching location..."))
+          Expanded(child: Text(locationName ?? "Searching location...",style: widget.textStyle,))
 
         ],
       ),
