@@ -24,7 +24,7 @@ dependencies:
   flutter:
     sdk: flutter
   # add flutter_map_location_picker
-  flutter_map_location_picker: ^0.0.3
+  flutter_map_location_picker: ^0.0.4
 ```
 
 ### How To Use
