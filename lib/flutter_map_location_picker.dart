@@ -280,8 +280,8 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
             _timer?.cancel();
             if(!move){
               _timer = Timer(const Duration(milliseconds: 200), () {
-                latitude = evt.center.latitude;
-                longitude = evt.center.longitude;
+                latitude = evt.camera.center.latitude;
+                longitude = evt.camera.center.longitude;
                 getLocationName();
 
               });
