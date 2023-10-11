@@ -11,9 +11,8 @@ class LocationPickerPage extends StatelessWidget {
       appBar: AppBar(
         title: Text("Location Picker"),
       ),
-      body: MapLocationPicker(onNext: (result){
+      body: MapLocationPicker(onPicked: (result){
         Navigator.pop(context,result);
-
       }),
     );
   }

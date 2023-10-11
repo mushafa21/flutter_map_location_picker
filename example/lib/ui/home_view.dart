@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
                   height: 500,
                   child: MapLocationPicker(
                     initialLocation: LatLng(latitude ?? -6.970136294118362, longitude ?? 110.40326425161746),
-                    onNext: (result){
+                    onPicked: (result){
                     Navigator.pop(context);
                     location = result.address;
                     latitude = result.latitude;

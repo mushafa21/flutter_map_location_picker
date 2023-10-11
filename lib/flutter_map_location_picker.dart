@@ -26,7 +26,7 @@ class LocationResult{
 
 class MapLocationPicker extends StatefulWidget {
   final LatLng? initialLocation;
-  final Function(LocationResult) onNext;
+  final Function(LocationResult) onPicked;
   final Color? backgroundColor;
   final Color? myLocationButtonColor;
   final Color? zoomButtonColor;
@@ -55,7 +55,7 @@ class MapLocationPicker extends StatefulWidget {
   final Widget Function(LocationResult,MapController)? sideWidget;
 
 
-  const MapLocationPicker({super.key, this.initialLocation, required this.onNext, this.backgroundColor, this.myLocationButtonColor, this.indicatorColor, this.addressTextStyle, this.searchTextStyle, this.centerWidget, this.buttonColor, this.buttonText, this.leadingIcon, this.searchBarDecoration, this.myLocationButtonEnabled = true, this.searchBarEnabled = true, this.sideWidget, this.customButton, this.customFooter, this.buttonTextStyle, this.zoomButtonEnabled = true, this.initialZoom, this.zoomButtonColor, this.switchMapTypeEnabled = true, this.mapType, this.sideButtonsColor, this.sideButtonsIconColor});
+  const MapLocationPicker({super.key, this.initialLocation, required this.onPicked, this.backgroundColor, this.myLocationButtonColor, this.indicatorColor, this.addressTextStyle, this.searchTextStyle, this.centerWidget, this.buttonColor, this.buttonText, this.leadingIcon, this.searchBarDecoration, this.myLocationButtonEnabled = true, this.searchBarEnabled = true, this.sideWidget, this.customButton, this.customFooter, this.buttonTextStyle, this.zoomButtonEnabled = true, this.initialZoom, this.zoomButtonColor, this.switchMapTypeEnabled = true, this.mapType, this.sideButtonsColor, this.sideButtonsIconColor});
 
 
   @override
@@ -189,7 +189,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
           ),
           const SizedBox(height: 20,),
           widget.customButton != null ? widget.customButton!(LocationResult(latitude, longitude, locationName)) : ElevatedButton(onPressed: (){
-            widget.onNext(
+            widget.onPicked(
                 LocationResult(latitude, longitude, locationName)
             );
           },style: ButtonStyle(
