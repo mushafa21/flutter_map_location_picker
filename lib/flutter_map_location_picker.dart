@@ -225,8 +225,8 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
             child: Padding(
               padding: const EdgeInsets.only(top: 10),
               child: IconButton(onPressed: (){
-                if(controller.zoom < 17){
-                  controller.move(LatLng(latitude, longitude), controller.zoom + 1);
+                if(controller.camera.zoom < 17){
+                  controller.move(LatLng(latitude, longitude), controller.camera.zoom + 1);
                 }
               }, icon: const Icon(Icons.zoom_in_map),color: widget.sideButtonsIconColor ??  Colors.white,style: IconButton.styleFrom(backgroundColor: widget.sideButtonsColor ?? Theme.of(context).colorScheme.primary),padding: const EdgeInsets.all(10),),
             ),
@@ -236,8 +236,8 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
             child: Padding(
               padding: const EdgeInsets.only(top: 10),
               child: IconButton(onPressed: (){
-                if(controller.zoom > 0){
-                  controller.move(LatLng(latitude, longitude), controller.zoom - 1);
+                if(controller.camera.zoom > 0){
+                  controller.move(LatLng(latitude, longitude), controller.camera.zoom - 1);
                 }
               }, icon: const Icon(Icons.zoom_out_map),color: widget.sideButtonsIconColor ??  Colors.white,style: IconButton.styleFrom(backgroundColor: widget.sideButtonsColor ?? Theme.of(context).colorScheme.primary),padding: const EdgeInsets.all(10),),
             ),
@@ -272,8 +272,8 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
     return FlutterMap(
       mapController: controller,
       options: MapOptions(
-        center: LatLng(latitude, longitude),
-        zoom: 16,
+        initialCenter: LatLng(latitude, longitude),
+        initialZoom: 16,
         maxZoom: 18,
         onMapReady: () {
           controller.mapEventStream.listen((evt) async {
@@ -294,35 +294,37 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
           });
         },
       ),
-      nonRotatedChildren: [
-        Positioned(
-            top: 10,
-            left: 10,
-            right: 10,
-            child: searchBar()),
-        Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Column(
-              children: [
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Padding(
-                    padding:  const EdgeInsets.only(right: 10),
-                    child: sideButton(),
-                  ),),
-                const SizedBox(height: 10,),
-                viewLocationName(),
-              ],
-            )),
-        Center(child: widget.centerWidget != null ? widget.centerWidget! : Icon(Icons.location_on_rounded,size: 60,color: widget.indicatorColor != null ? widget.indicatorColor! : Theme.of(context).colorScheme.primary,))
-      ],
       children: [
         TileLayer(
           urlTemplate: mapType == MapType.normal ? "http://tile.openstreetmap.org/{z}/{x}/{y}.png" : 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}.jpg',
           userAgentPackageName: 'com.example.app',
         ),
+        Stack(
+          children: [
+            Positioned(
+                top: 10,
+                left: 10,
+                right: 10,
+                child: searchBar()),
+            Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                        padding:  const EdgeInsets.only(right: 10),
+                        child: sideButton(),
+                      ),),
+                    const SizedBox(height: 10,),
+                    viewLocationName(),
+                  ],
+                )),
+            Center(child: widget.centerWidget != null ? widget.centerWidget! : Icon(Icons.location_on_rounded,size: 60,color: widget.indicatorColor != null ? widget.indicatorColor! : Theme.of(context).colorScheme.primary,))
+          ],
+        )
       ],
     );
   }
