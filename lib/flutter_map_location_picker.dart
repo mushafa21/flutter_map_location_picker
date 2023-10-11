@@ -13,6 +13,10 @@ enum MapType{
   normal,satelite
 }
 
+/// Location Result contain:
+/// * [latitude] as [double]
+/// * [longitude] as [double]
+/// * [address] as [String]
 class LocationResult{
   double latitude;
   double longitude;
@@ -26,7 +30,7 @@ class LocationResult{
 
 class MapLocationPicker extends StatefulWidget {
   final LatLng? initialLocation;
-  final Function(LocationResult) onPicked;
+  final Function(LocationResult onPicked) onPicked;
   final Color? backgroundColor;
 
   final Color? indicatorColor;
@@ -47,11 +51,12 @@ class MapLocationPicker extends StatefulWidget {
   final bool searchBarEnabled;
   final bool switchMapTypeEnabled;
   final MapType? mapType;
-  final Widget Function(LocationResult)? customButton;
-  final Widget Function(LocationResult, MapController)? customFooter;
-  final Widget Function(LocationResult,MapController)? sideWidget;
+  final Widget Function(LocationResult locationResult)? customButton;
+  final Widget Function(LocationResult locationResult, MapController mapController)? customFooter;
+  final Widget Function(LocationResult locationResult, MapController mapController)? sideWidget;
 
 
+  /// [onPicked] action on click select Location
   const MapLocationPicker({super.key, this.initialLocation, required this.onPicked, this.backgroundColor, this.indicatorColor, this.addressTextStyle, this.searchTextStyle, this.centerWidget, this.buttonColor, this.buttonText, this.leadingIcon, this.searchBarDecoration, this.myLocationButtonEnabled = true, this.searchBarEnabled = true, this.sideWidget, this.customButton, this.customFooter, this.buttonTextStyle, this.zoomButtonEnabled = true, this.initialZoom, this.switchMapTypeEnabled = true, this.mapType, this.sideButtonsColor, this.sideButtonsIconColor});
 
 
