@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
               Navigator.of(context).push(MaterialPageRoute(builder: (context) => const LocationPickerPage())).then((result) {
                 if(result != null){
                   final locationResult = result as LocationResult;
-                  location = locationResult.address;
+                  location = locationResult.completeAddress;
                   latitude = locationResult.latitude;
                   longitude = locationResult.longitude;
                   setState(() {
@@ -56,19 +56,19 @@ class _HomePageState extends State<HomePage> {
                     initialLocation: LatLng(latitude ?? -6.970136294118362, longitude ?? 110.40326425161746),
                     onPicked: (result){
                     Navigator.pop(context);
-                    location = result.address;
+                    location = result.completeAddress;
                     latitude = result.latitude;
                     longitude = result.longitude;
                   },backgroundColor: Colors.white, centerWidget: const Icon(Icons.add,size: 40, color: Colors.blue,),sideButtonsColor: Colors.blue,customFooter: (result,controller){
                     return Container(
                       padding: const EdgeInsets.all(10),
                       color: Colors.lightBlue,
-                      child: Text(result.address,style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white),),
+                      child: Text(result.completeAddress ?? "Location not found",style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white),),
                     );
                     
                   },myLocationButtonEnabled: true,zoomButtonEnabled: false,switchMapTypeEnabled: false,mapType: MapType.satelite, sideWidget: (result,controller){
                     return TextButton.icon(onPressed: (){
-                      location = result.address;
+                      location = result.completeAddress;
                       setState(() {
 
                       });
