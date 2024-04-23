@@ -36,7 +36,13 @@ class LocationResult {
 }
 
 class MapLocationPicker extends StatefulWidget {
-  final LatLng? initialLocation;
+  /// The initial longitude
+  final double? initialLongitude;
+
+  /// The initial latitude
+  final double? initialLatitude;
+
+  /// callback when location is picked
   final Function(LocationResult onPicked) onPicked;
   final Color? backgroundColor;
 
@@ -65,9 +71,12 @@ class MapLocationPicker extends StatefulWidget {
       LocationResult locationResult, MapController mapController)? sideWidget;
 
   /// [onPicked] action on click select Location
+  /// [initialLatitude] the latitude of the initial location
+  /// [initialLongitude] the longitude of the initial location
   const MapLocationPicker(
       {super.key,
-      this.initialLocation,
+      required this.initialLatitude,
+      required this.initialLongitude,
       required this.onPicked,
       this.backgroundColor,
       this.indicatorColor,
@@ -111,10 +120,9 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
   @override
   void initState() {
     super.initState();
-    if (widget.initialLocation != null) {
-      _latitude = widget.initialLocation!.latitude;
-      _longitude = widget.initialLocation!.longitude;
-    }
+    _latitude = widget.initialLatitude ?? -6.984072660841485;
+    _longitude = widget.initialLongitude ?? 110.40950678599624;
+
     if (widget.mapType != null) {
       _mapType = widget.mapType!;
     }
@@ -359,10 +367,8 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
               child: TextButton(
                 onPressed: () {
                   _move = true;
-                  _latitude =
-                      widget.initialLocation?.latitude ?? -6.970136294118362;
-                  _longitude =
-                      widget.initialLocation?.longitude ?? 110.40326425161746;
+                  _latitude = widget.initialLatitude ?? -6.970136294118362;
+                  _longitude = widget.initialLongitude ?? 110.40326425161746;
                   setState(() {});
                   _controller.move(LatLng(_latitude, _longitude), 16);
                   _timer?.cancel();

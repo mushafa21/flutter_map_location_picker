@@ -1,3 +1,6 @@
+## 0.0.6
+- change the initial location parameter
+
 ## 0.0.5
 - refactoring LocationResult variables
 - updating dependencies
