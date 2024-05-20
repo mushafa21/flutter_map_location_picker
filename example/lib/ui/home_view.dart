@@ -1,7 +1,6 @@
 import 'package:example/ui/location_picker_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map_location_picker/flutter_map_location_picker.dart';
-import 'package:latlong2/latlong.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -22,7 +21,7 @@ class _HomePageState extends State<HomePage> {
         title: const Text("Example"),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.max,
@@ -106,9 +105,9 @@ class _HomePageState extends State<HomePage> {
                                   Navigator.pop(context);
                                 },
                                 label: const Text("Select Location"),
-                                style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(
-                                        Colors.yellow)),
+                                style: TextButton.styleFrom(
+                                  backgroundColor:  Colors.yellow
+                                ),
                                 icon: const Icon(Icons.check),
                               );
                             },

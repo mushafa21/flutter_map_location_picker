@@ -37,11 +37,11 @@ import 'package:flutter_map_location_picker/flutter_map_location_picker.dart';
 You can now add a `MapLocationPicker` widget to your widget tree. You can process the picked location by using the `onPicked` parameter.
 
 ```dart
-MapLocationPicker(onPicked: (result){
-    // you can get the location result here
-    print(result.completeAddress);
-    print(result.latitude);
-    print(result.longitude);
+MapLocationPicker(initialLatitude: null, initialLongitude: null, onPicked: (result){
+  // you can get the location result here
+  print(result.completeAddress);
+  print(result.latitude);
+  print(result.longitude);
 })
 ```
 

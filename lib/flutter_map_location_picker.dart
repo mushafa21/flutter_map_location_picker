@@ -279,9 +279,8 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                           onPressed: () {
                             widget.onPicked(_locationResult);
                           },
-                          style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  widget.buttonColor)),
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: widget.buttonColor),
                           child: Text(widget.buttonText != null
                               ? widget.buttonText!
                               : "Select Location"),

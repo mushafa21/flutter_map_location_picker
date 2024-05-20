@@ -1,3 +1,7 @@
+## 0.0.7
+- updating example and README
+- changing pick location button style
+
 ## 0.0.6
 - change the initial location parameter
 
