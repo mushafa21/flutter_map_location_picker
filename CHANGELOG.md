@@ -1,3 +1,8 @@
+## 0.0.8
+- add location name to map and location result
+- improve complete adress values
+- 
+
 ## 0.0.7
 - updating example and README
 - changing pick location button style
